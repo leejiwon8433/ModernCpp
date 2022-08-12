@@ -150,6 +150,7 @@
     <ClInclude Include="mystring.hpp" />
     <ClInclude Include="my_util.hpp" />
     <ClInclude Include="perfect_forwarding.hpp" />
+    <ClInclude Include="smart_pointer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

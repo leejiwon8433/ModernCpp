@@ -4,10 +4,21 @@
 #include "mystring.hpp"
 #include "my_util.hpp"
 #include "perfect_forwarding.hpp"
+#include "smart_pointer.hpp"
+
+// CRT
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+#define new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#endif
 
 
 int main()
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 #pragma region Copy Elision
 	/*
 	std::cout << '\n' << "========== Copy Elision ==========" << '\n';
@@ -70,7 +81,7 @@ int main()
 #pragma endregion
 
 #pragma region Perfect Forwarding
-	std::cout << '\n' << "========== Perfect Forwarding ==========" << '\n';
+	/*std::cout << '\n' << "========== Perfect Forwarding ==========" << '\n';
 
 	A a;
 	const A ca;
@@ -83,7 +94,53 @@ int main()
 	std::cout << "Wrapper -----" << std::endl;
 	wrapper(a);
 	wrapper(ca);
-	wrapper(A());
+	wrapper(A());*/
 #pragma endregion
+
+#pragma region Unique Pointer
+	/*std::cout << '\n' << "========== Unique Pointer ==========" << '\n';
+
+	// 함수 인자로 넘기기.
+	std::unique_ptr<Smart> ps(new Smart(1));
+	do_something(ps.get());
+
+
+	// make_*() 함수 사용하기.
+	std::cout << '\n' << "----------" << '\n';
+	auto ptr = std::make_unique<Foo>(3, 5);
+	ptr->print();
+
+
+	// 컨테이너 사용하기.
+	std::cout << '\n' << "----------" << '\n';
+	std::vector<std::unique_ptr<Smart>> vec;
+	std::unique_ptr<Smart> pa = std::make_unique<Smart>(1);
+
+	vec.push_back(std::move(pa));*/
+#pragma endregion
+
+#pragma region Shared Pointer
+	std::cout << '\n' << "========== Shared Pointer ==========" << '\n';
+
+	std::vector<std::shared_ptr<Smart>> vec;
+
+	vec.push_back(std::make_shared<Smart>());
+	vec.push_back(vec[0]);
+	vec.push_back(vec[1]);
+
+	// 벡터의 첫번째 원소를 소멸 시킨다.
+	std::cout << "erase\tcnt: " << vec[0].use_count() << std::endl;
+	vec.erase(vec.begin());
+
+	// 그 다음 원소를 소멸 시킨다.
+	std::cout << "erase\tcnt: " << vec[0].use_count() << std::endl;
+	vec.erase(vec.begin());
+
+	// 마지막 원소 소멸
+	std::cout << "erase\tcnt: " << vec[0].use_count() << std::endl;
+	vec.erase(vec.begin());
+
+#pragma endregion
+
 
 }
